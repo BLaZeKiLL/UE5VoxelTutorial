@@ -126,17 +126,17 @@ FVector AChunk::GetPositionInDirection(const EDirection Direction, const FVector
 {
 	switch (Direction)
 	{
-		case EDirection::Forward: return Position + FVector(1,0,0);
-		case EDirection::Back: return Position + FVector(-1,0,0);
-		case EDirection::Left: return Position + FVector(0,-1,0);
-		case EDirection::Right: return Position + FVector(0,1,0);
-		case EDirection::Up: return Position + FVector(0,0,1);
-		case EDirection::Down: return Position + FVector(0,0,-1);
+		case EDirection::Forward: return Position + FVector::ForwardVector;
+		case EDirection::Back: return Position + FVector::BackwardVector;
+		case EDirection::Left: return Position + FVector::LeftVector;
+		case EDirection::Right: return Position + FVector::RightVector;
+		case EDirection::Up: return Position + FVector::UpVector;
+		case EDirection::Down: return Position + FVector::DownVector;
 		default: throw std::invalid_argument("Invalid direction");
 	}
 }
 
-int AChunk::GetBlockIndex(int X, int Y, int Z) const
+int AChunk::GetBlockIndex(const int X, const int Y, const int Z) const
 {
 	return Z * Size * Size + Y * Size + X;
 }
