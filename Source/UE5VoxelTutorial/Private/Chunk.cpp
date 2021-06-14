@@ -24,6 +24,9 @@ AChunk::AChunk()
 
 	// Mesh Settings
 	Mesh->SetCastShadow(false);
+
+	// Set Mesh as root
+	SetRootComponent(Mesh);
 }
 
 // Called when the game starts or when spawned
@@ -34,6 +37,8 @@ void AChunk::BeginPlay()
 	GenerateBlocks();
 	
 	GenerateMesh();
+
+	UE_LOG(LogTemp, Warning, TEXT("Vertex Count : %d"), VertexCount);
 	
 	ApplyMesh();
 }

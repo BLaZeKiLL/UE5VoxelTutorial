@@ -24,6 +24,9 @@ AGreedyChunk::AGreedyChunk()
 
 	// Mesh Settings
 	Mesh->SetCastShadow(false);
+
+	// Set Mesh as root
+	SetRootComponent(Mesh);
 }
 
 // Called when the game starts or when spawned
