@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-
 #include "ChunkMeshData.h"
 #include "GameFramework/Actor.h"
 #include "GreedyChunk.generated.h"
