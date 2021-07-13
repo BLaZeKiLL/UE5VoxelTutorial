@@ -36,7 +36,7 @@ protected:
 
 private:
 	TObjectPtr<UProceduralMeshComponent> Mesh;
-	TObjectPtr<FastNoiseLite> Noise;
+	FastNoiseLite* Noise;
 	
 	FChunkMeshData MeshData;
 	TArray<EBlock> Blocks;
