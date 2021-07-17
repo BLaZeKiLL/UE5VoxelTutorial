@@ -9,62 +9,57 @@
 // Sets default values
 AMarchingChunk::AMarchingChunk()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
-
-	Mesh = CreateDefaultSubobject<UProceduralMeshComponent>("Mesh");
-	Noise = new FastNoiseLite();
-	Noise->SetFrequency(0.03f);
-	Noise->SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-	Noise->SetFractalType(FastNoiseLite::FractalType_FBm);
-
-	// Initialize Blocks
+	// Initialize Voxels
 	Voxels.SetNum((Size + 1) * (Size + 1) * (Size + 1));
-
-	// Mesh Settings
-	Mesh->SetCastShadow(false);
-
-	// Set Mesh as root
-	SetRootComponent(Mesh);
 }
 
 // Called when the game starts or when spawned
 void AMarchingChunk::BeginPlay()
 {
 	Super::BeginPlay();
-
-	GenerateVoxels();
-
-	GenerateMesh();
-
-	UE_LOG(LogTemp, Warning, TEXT("Vertex Count : %d"), VertexCount);
-	
-	ApplyMesh();
 }
 
-void AMarchingChunk::GenerateVoxels()
+void AMarchingChunk::GenerateHeightMap()
 {
-	const auto Location = GetActorLocation();
+	Generate3DHeightMap(GetActorLocation() / 100);
+}
 
+void AMarchingChunk::Generate2DHeightMap(const FVector Position)
+{
+	for (int x = 0; x <= Size; ++x)
+	{
+		for (int y = 0; y <= Size; ++y)
+		{
+			const float Xpos = x * Position.X;
+			const float ypos = y * Position.Y;
+			
+			const int Height = FMath::Clamp(FMath::RoundToInt((Noise->GetNoise(Xpos, ypos) + 1) * Size / 2), 0, Size);
+
+			for (int z = 0; z < Height; z++)
+			{
+				Voxels[GetVoxelIndex(x,y,z)] = 1.0f;
+			}
+
+			for (int z = Height; z < Size; z++)
+			{
+				Voxels[GetVoxelIndex(x,y,z)] = -1.0f;
+			}
+		}
+	}
+}
+
+void AMarchingChunk::Generate3DHeightMap(const FVector Position)
+{	
 	for (int x = 0; x <= Size; ++x)
 	{
 		for (int y = 0; y <= Size; ++y)
 		{
 			for (int z = 0; z <= Size; ++z)
 			{
-				const float Xpos = (x * 100 + Location.X) / 100;
-				const float Ypos = (y * 100 + Location.Y) / 100;
-				const float Zpos = (z * 100 + Location.Z) / 100;
-
-				Voxels[GetVoxelIndex(x,y,z)] = Noise->GetNoise(Xpos, Ypos, Zpos);
+				Voxels[GetVoxelIndex(x,y,z)] = Noise->GetNoise(x + Position.X, y + Position.Y, z + Position.Z);	
 			}
 		}
 	}
-}
-
-void AMarchingChunk::ApplyMesh()
-{
-	Mesh->CreateMeshSection(0, MeshData.Vertices, MeshData.Triangles, TArray<FVector>(), TArray<FVector2D>(), TArray<FColor>(), TArray<FProcMeshTangent>(), false);
 }
 
 void AMarchingChunk::GenerateMesh()
@@ -102,7 +97,7 @@ void AMarchingChunk::GenerateMesh()
 	}
 }
 
-void AMarchingChunk::March(const int X, const int Y, const int Z, const float Cube[])
+void AMarchingChunk::March(const int X, const int Y, const int Z, const float Cube[8])
 {
 	int VertexMask = 0;
 	FVector EdgeVertex[12];
@@ -116,13 +111,13 @@ void AMarchingChunk::March(const int X, const int Y, const int Z, const float Cu
 	const int EdgeMask = CubeEdgeFlags[VertexMask];
 	
 	if (EdgeMask == 0) return;
-	
+		
 	// Find intersection points
 	for (int i = 0; i < 12; ++i)
 	{
 		if ((EdgeMask & 1 << i) != 0)
 		{
-			const float Offset = GetInterpolationOffset(Cube[EdgeConnection[i][0]], Cube[EdgeConnection[i][1]]);
+			const float Offset = Interpolation ? GetInterpolationOffset(Cube[EdgeConnection[i][0]], Cube[EdgeConnection[i][1]]) : 0.5f;
 
 			EdgeVertex[i].X = X + (VertexOffset[EdgeConnection[i][0]][0] + Offset * EdgeDirection[i][0]);
 			EdgeVertex[i].Y = Y + (VertexOffset[EdgeConnection[i][0]][1] + Offset * EdgeDirection[i][1]);
@@ -134,12 +129,25 @@ void AMarchingChunk::March(const int X, const int Y, const int Z, const float Cu
 	for (int i = 0; i < 5; ++i)
 	{
 		if (TriangleConnectionTable[VertexMask][3 * i] < 0) break;
-		
-		for (int j = 0; j < 3; ++j)
-		{
-			MeshData.Triangles.Add(VertexCount + TriangleOrder[j]);
-			MeshData.Vertices.Add(EdgeVertex[TriangleConnectionTable[VertexMask][3 * i + j]] * 100);
-		}
+
+		auto V1 = EdgeVertex[TriangleConnectionTable[VertexMask][3 * i]] * 100;
+		auto V2 = EdgeVertex[TriangleConnectionTable[VertexMask][3 * i + 1]] * 100;
+		auto V3 = EdgeVertex[TriangleConnectionTable[VertexMask][3 * i + 2]] * 100;
+
+		auto Normal = FVector::CrossProduct(V2 - V1, V3 - V1);
+		Normal.Normalize();
+
+		MeshData.Vertices.Add(V1);
+		MeshData.Vertices.Add(V2);
+		MeshData.Vertices.Add(V3);
+
+		MeshData.Triangles.Add(VertexCount + TriangleOrder[0]);
+		MeshData.Triangles.Add(VertexCount + TriangleOrder[1]);
+		MeshData.Triangles.Add(VertexCount + TriangleOrder[2]);
+
+		MeshData.Normals.Add(Normal);
+		MeshData.Normals.Add(Normal);
+		MeshData.Normals.Add(Normal);
 
 		VertexCount += 3;
 	}
@@ -147,7 +155,7 @@ void AMarchingChunk::March(const int X, const int Y, const int Z, const float Cu
 
 int AMarchingChunk::GetVoxelIndex(const int X, const int Y, const int Z) const
 {
-	return Z * Size * Size + Y * Size + X;
+	return Z * (Size + 1) * (Size + 1) + Y * (Size + 1) + X;
 }
 
 float AMarchingChunk::GetInterpolationOffset(const float V1, const float V2) const

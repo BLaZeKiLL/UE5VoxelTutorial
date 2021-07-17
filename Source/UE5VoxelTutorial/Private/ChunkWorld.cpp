@@ -2,7 +2,7 @@
 
 
 #include "ChunkWorld.h"
-
+#include "ChunkBase.h"
 
 // Sets default values
 AChunkWorld::AChunkWorld()
@@ -16,13 +16,15 @@ void AChunkWorld::BeginPlay()
 {
 	Super::BeginPlay();
 
+	const auto Size = Chunk.GetDefaultObject()->Size;
+	
 	for (int x = -DrawDistance; x <= DrawDistance; x++)
 	{
-		for (int y = -DrawDistance; y < DrawDistance; ++y)
-		{
-			GetWorld()->SpawnActor<AActor>(
+		for (int y = -DrawDistance; y <= DrawDistance; ++y)
+		{			
+			GetWorld()->SpawnActor<AChunkBase>(
 				Chunk,
-				FVector(x * ChunkSize * 100, y * ChunkSize * 100, 0),
+				FVector(x * Size * 100, y * Size * 100, 0),
 				FRotator::ZeroRotator
 			);
 		}

@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "ChunkBase.h"
 #include "ChunkMeshData.h"
 #include "GameFramework/Actor.h"
 #include "MarchingChunk.generated.h"
@@ -11,7 +13,7 @@ class FastNoiseLite;
 class UProceduralMeshComponent;
 
 UCLASS()
-class AMarchingChunk : public AActor
+class AMarchingChunk final : public AChunkBase
 {
 	GENERATED_BODY()
 
@@ -19,39 +21,34 @@ public:
 	// Sets default values for this actor's properties
 	AMarchingChunk();
 
-	UPROPERTY(EditAnywhere, Category="Chunk")
-	int Size = 64;
-
-	UPROPERTY(EditAnywhere, Category="Chunk")
+	UPROPERTY(EditDefaultsOnly, Category="Marching Cubes")
 	float SurfaceLevel = 0.0f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Marching Cubes")
+	bool Interpolation = false;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void GenerateHeightMap() override;
+
+	virtual void GenerateMesh() override;
+
 private:
-	TObjectPtr<UProceduralMeshComponent> Mesh;
-	FastNoiseLite* Noise;
-
-	FChunkMeshData MeshData;
-
 	TArray<float> Voxels;
+	
+	int TriangleOrder[3] = {0, 1, 2};
+	
+	void Generate2DHeightMap(FVector Position);
+	
+	void Generate3DHeightMap(FVector Position);
 
-	void GenerateVoxels();
-
-	void ApplyMesh();
-
-	void GenerateMesh();
-
-	void March(int X, int Y, int Z, const float Cube[]);
+	void March(int X, int Y, int Z, const float Cube[8]);
 
 	int GetVoxelIndex(int X, int Y, int Z) const;
 
 	float GetInterpolationOffset(float V1, float V2) const;
-
-	int TriangleOrder[3] = {0, 1, 2};
-
-	int VertexCount = 0;
 
 	const int VertexOffset[8][3] = {
 		{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0},
@@ -62,7 +59,7 @@ private:
 		{0, 1}, {1, 2}, {2, 3}, {3, 0},
 		{4, 5}, {5, 6}, {6, 7}, {7, 4},
 		{0, 4}, {1, 5}, {2, 6}, {3, 7}
-	};
+	};         
 
 	const float EdgeDirection[12][3] = {
 		{1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {-1.0f, 0.0f, 0.0f}, {0.0f, -1.0f, 0.0f},

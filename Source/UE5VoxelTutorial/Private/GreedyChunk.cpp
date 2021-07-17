@@ -10,69 +10,41 @@
 // Sets default values
 AGreedyChunk::AGreedyChunk()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
-
-	Mesh = CreateDefaultSubobject<UProceduralMeshComponent>("Mesh");
-	Noise = new FastNoiseLite();
-	Noise->SetFrequency(0.03f);
-	Noise->SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-	Noise->SetFractalType(FastNoiseLite::FractalType_FBm);
-
 	// Initialize Blocks
-	Blocks.SetNum(Size.X * Size.Y * Size.Z);
-
-	// Mesh Settings
-	Mesh->SetCastShadow(false);
-
-	// Set Mesh as root
-	SetRootComponent(Mesh);
+	Blocks.SetNum(Size * Size * Size);
 }
 
 // Called when the game starts or when spawned
 void AGreedyChunk::BeginPlay()
 {
 	Super::BeginPlay();
-
-	GenerateBlocks();
-
-	GenerateMesh();
-
-	UE_LOG(LogTemp, Warning, TEXT("Vertex Count : %d"), VertexCount);
-
-	ApplyMesh();
 }
 
-void AGreedyChunk::GenerateBlocks()
+void AGreedyChunk::GenerateHeightMap()
 {
 	const auto Location = GetActorLocation();
 	
-	for (int x = 0; x < Size.X; x++)
+	for (int x = 0; x < Size; x++)
 	{
-		for (int y = 0; y < Size.Y; y++)
+		for (int y = 0; y < Size; y++)
 		{
 			const float Xpos = (x * 100 + Location.X) / 100;
 			const float ypos = (y * 100 + Location.Y) / 100;
 			
-			const int Height = FMath::Clamp(FMath::RoundToInt((Noise->GetNoise(Xpos, ypos) + 1) * Size.Z / 2), 0, Size.Z);
+			const int Height = FMath::Clamp(FMath::RoundToInt((Noise->GetNoise(Xpos, ypos) + 1) * Size / 2), 0, Size);
 
 			for (int z = 0; z < Height; z++)
 			{
 				Blocks[GetBlockIndex(x,y,z)] = EBlock::Stone;
 			}
 
-			for (int z = Height; z < Size.Z; z++)
+			for (int z = Height; z < Size; z++)
 			{
 				Blocks[GetBlockIndex(x,y,z)] = EBlock::Air;
 			}
 			
 		}
 	}
-}
-
-void AGreedyChunk::ApplyMesh()
-{
-	Mesh->CreateMeshSection(0, MeshData.Vertices, MeshData.Triangles, MeshData.Normals, MeshData.UV0, TArray<FColor>(), TArray<FProcMeshTangent>(), false);
 }
 
 void AGreedyChunk::GenerateMesh()
@@ -84,9 +56,9 @@ void AGreedyChunk::GenerateMesh()
 		const int Axis1 = (Axis + 1) % 3;
 		const int Axis2 = (Axis + 2) % 3;
 
-		const int MainAxisLimit = Size[Axis];
-		int Axis1Limit = Size[Axis1];
-		int Axis2Limit = Size[Axis2];
+		const int MainAxisLimit = Size;
+		int Axis1Limit = Size;
+		int Axis2Limit = Size;
 
 		auto DeltaAxis1 = FIntVector::ZeroValue;
 		auto DeltaAxis2 = FIntVector::ZeroValue;
@@ -234,12 +206,12 @@ void AGreedyChunk::CreateQuad(FMask Mask, FIntVector AxisMask, FIntVector V1, FI
 
 int AGreedyChunk::GetBlockIndex(const int X, const int Y, const int Z) const
 {	
-	return Z * Size.X * Size.Y + Y * Size.X + X;
+	return Z * Size * Size + Y * Size + X;
 }
 
 EBlock AGreedyChunk::GetBlock(const FIntVector Index) const
 {
-	if (Index.X >= Size.X || Index.Y >= Size.Y || Index.Z >= Size.Z || Index.X < 0 || Index.Y < 0 || Index.Z < 0)
+	if (Index.X >= Size || Index.Y >= Size || Index.Z >= Size || Index.X < 0 || Index.Y < 0 || Index.Z < 0)
 		return EBlock::Air;
 	return Blocks[GetBlockIndex(Index.X, Index.Y, Index.Z)];
 }

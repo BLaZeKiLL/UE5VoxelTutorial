@@ -1,49 +1,26 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Chunk.h"
+#include "NaiveChunk.h"
 
 #include "Enums.h"
 #include "ProceduralMeshComponent.h"
 #include "FastNoiseLite.h"
 
 // Sets default values
-AChunk::AChunk()
+ANaiveChunk::ANaiveChunk()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
-
-	Mesh = CreateDefaultSubobject<UProceduralMeshComponent>("Mesh");
-	Noise = new FastNoiseLite();
-	Noise->SetFrequency(0.03f);
-	Noise->SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-	Noise->SetFractalType(FastNoiseLite::FractalType_FBm);
-
 	// Initialize Blocks
 	Blocks.SetNum(Size * Size * Size);
-
-	// Mesh Settings
-	Mesh->SetCastShadow(false);
-
-	// Set Mesh as root
-	SetRootComponent(Mesh);
 }
 
 // Called when the game starts or when spawned
-void AChunk::BeginPlay()
+void ANaiveChunk::BeginPlay()
 {
 	Super::BeginPlay();
-
-	GenerateBlocks();
-	
-	GenerateMesh();
-
-	UE_LOG(LogTemp, Warning, TEXT("Vertex Count : %d"), VertexCount);
-	
-	ApplyMesh();
 }
 
-void AChunk::GenerateBlocks()
+void ANaiveChunk::GenerateHeightMap()
 {
 	const auto Location = GetActorLocation();
 	
@@ -70,7 +47,7 @@ void AChunk::GenerateBlocks()
 	}
 }
 
-void AChunk::GenerateMesh()
+void ANaiveChunk::GenerateMesh()
 {
 	for (int x = 0; x < Size; x++)
 	{
@@ -95,39 +72,34 @@ void AChunk::GenerateMesh()
 	}
 }
 
-void AChunk::ApplyMesh() const
-{
-	Mesh->CreateMeshSection(0, VertexData, TriangleData, TArray<FVector>(), UVData, TArray<FColor>(), TArray<FProcMeshTangent>(), false);
-}
-
-bool AChunk::Check(const FVector Position) const
+bool ANaiveChunk::Check(const FVector Position) const
 {
 	if (Position.X >= Size || Position.Y >= Size || Position.X < 0 || Position.Y < 0 || Position.Z < 0) return true;
 	if (Position.Z >= Size) return true;
 	return Blocks[GetBlockIndex(Position.X, Position.Y, Position.Z)] == EBlock::Air;
 }
 
-void AChunk::CreateFace(const EDirection Direction, const FVector Position)
+void ANaiveChunk::CreateFace(const EDirection Direction, const FVector Position)
 {
-	VertexData.Append(GetFaceVertices(Direction, Position));
-	UVData.Append({ FVector2D(1,1), FVector2D(1,0), FVector2D(0,0), FVector2D(0,1) });
-	TriangleData.Append({ VertexCount + 3, VertexCount + 2, VertexCount, VertexCount + 2, VertexCount + 1, VertexCount });
+	MeshData.Vertices.Append(GetFaceVertices(Direction, Position));
+	MeshData.UV0.Append({ FVector2D(1,1), FVector2D(1,0), FVector2D(0,0), FVector2D(0,1) });
+	MeshData.Triangles.Append({ VertexCount + 3, VertexCount + 2, VertexCount, VertexCount + 2, VertexCount + 1, VertexCount });
 	VertexCount += 4;
 }
 
-TArray<FVector> AChunk::GetFaceVertices(EDirection Direction, FVector Position) const
+TArray<FVector> ANaiveChunk::GetFaceVertices(EDirection Direction, const FVector Position) const
 {
 	TArray<FVector> Vertices;
 
 	for (int i = 0; i < 4; i++)
 	{
-		Vertices.Add(BlockVertexData[BlockTriangleData[i + static_cast<int>(Direction) * 4]] * Scale + Position);
+		Vertices.Add(BlockVertexData[BlockTriangleData[i + static_cast<int>(Direction) * 4]] + Position);
 	}
 	
 	return Vertices;
 }
 
-FVector AChunk::GetPositionInDirection(const EDirection Direction, const FVector Position) const
+FVector ANaiveChunk::GetPositionInDirection(const EDirection Direction, const FVector Position) const
 {
 	switch (Direction)
 	{
@@ -141,7 +113,7 @@ FVector AChunk::GetPositionInDirection(const EDirection Direction, const FVector
 	}
 }
 
-int AChunk::GetBlockIndex(const int X, const int Y, const int Z) const
+int ANaiveChunk::GetBlockIndex(const int X, const int Y, const int Z) const
 {
 	return Z * Size * Size + Y * Size + X;
 }

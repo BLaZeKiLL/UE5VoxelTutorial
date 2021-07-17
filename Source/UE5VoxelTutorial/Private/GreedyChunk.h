@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "ChunkBase.h"
 #include "ChunkMeshData.h"
 #include "GameFramework/Actor.h"
 #include "GreedyChunk.generated.h"
@@ -13,7 +15,7 @@ class FastNoiseLite;
 class UProceduralMeshComponent;
 
 UCLASS()
-class AGreedyChunk : public AActor
+class AGreedyChunk final : public AChunkBase
 {
 	GENERATED_BODY()
 
@@ -27,27 +29,16 @@ public:
 	// Sets default values for this actor's properties
 	AGreedyChunk();
 
-	UPROPERTY(EditAnywhere, Category="Chunk")
-	FIntVector Size = FIntVector(1,1,1) * 32;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void GenerateHeightMap() override;
+	
+	virtual void GenerateMesh() override;
+
 private:
-	TObjectPtr<UProceduralMeshComponent> Mesh;
-	FastNoiseLite* Noise;
-	
-	FChunkMeshData MeshData;
 	TArray<EBlock> Blocks;
-
-	int VertexCount = 0;
-
-	void GenerateBlocks();
-
-	void ApplyMesh();
-	
-	void GenerateMesh();
 
 	void CreateQuad(FMask Mask, FIntVector AxisMask, FIntVector V1, FIntVector V2, FIntVector V3, FIntVector V4);
 
