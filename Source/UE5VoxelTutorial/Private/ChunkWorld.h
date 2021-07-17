@@ -14,10 +14,13 @@ class AChunkWorld : public AActor
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditAnywhere, Category="Chunk World")
+	UPROPERTY(EditInstanceOnly, Category="Chunk World")
 	TSubclassOf<AChunkBase> Chunk;
+
+	UPROPERTY(EditInstanceOnly, Category="Chunk World")
+	bool Draw3D = false;
 	
-	UPROPERTY(EditAnywhere, Category="Chunk World")
+	UPROPERTY(EditInstanceOnly, Category="Chunk World")
 	int DrawDistance = 5;
 	
 	// Sets default values for this actor's properties

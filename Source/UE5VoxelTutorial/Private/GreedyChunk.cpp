@@ -143,7 +143,7 @@ void AGreedyChunk::GenerateMesh()
 						DeltaAxis2[Axis2] = Height;
 
 						CreateQuad(
-							CurrentMask, AxisMask,
+							CurrentMask, AxisMask, Width, Height,
 							ChunkItr,
 							ChunkItr + DeltaAxis1,
 							ChunkItr + DeltaAxis2,
@@ -175,7 +175,7 @@ void AGreedyChunk::GenerateMesh()
 	}
 }
 
-void AGreedyChunk::CreateQuad(FMask Mask, FIntVector AxisMask, FIntVector V1, FIntVector V2, FIntVector V3, FIntVector V4)
+void AGreedyChunk::CreateQuad(FMask Mask, FIntVector AxisMask, int Width, int Height, FIntVector V1, FIntVector V2, FIntVector V3, FIntVector V4)
 {
 	const auto Normal = FVector(AxisMask * Mask.Normal);
 
@@ -191,10 +191,10 @@ void AGreedyChunk::CreateQuad(FMask Mask, FIntVector AxisMask, FIntVector V1, FI
 	MeshData.Triangles.Add(VertexCount + 1 - Mask.Normal);
 	MeshData.Triangles.Add(VertexCount + 1 + Mask.Normal);
 
-	MeshData.UV0.Add(FVector2D(0,0));
-	MeshData.UV0.Add(FVector2D(0,1));
-	MeshData.UV0.Add(FVector2D(1,0));
-	MeshData.UV0.Add(FVector2D(1,1));
+	MeshData.UV0.Add(FVector2D(0, 0));
+	MeshData.UV0.Add(FVector2D(0, Width));
+	MeshData.UV0.Add(FVector2D(Height, 0));
+	MeshData.UV0.Add(FVector2D(Height, Width));
 
 	MeshData.Normals.Add(Normal);
 	MeshData.Normals.Add(Normal);

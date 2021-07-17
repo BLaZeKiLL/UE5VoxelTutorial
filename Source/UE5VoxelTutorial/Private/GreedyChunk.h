@@ -40,7 +40,7 @@ protected:
 private:
 	TArray<EBlock> Blocks;
 
-	void CreateQuad(FMask Mask, FIntVector AxisMask, FIntVector V1, FIntVector V2, FIntVector V3, FIntVector V4);
+	void CreateQuad(FMask Mask, FIntVector AxisMask, int Width, int Height, FIntVector V1, FIntVector V2, FIntVector V3, FIntVector V4);
 
 	int GetBlockIndex(int X, int Y, int Z) const;
 
