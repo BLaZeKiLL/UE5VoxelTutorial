@@ -5,12 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "ChunkBase.h"
-#include "ChunkMeshData.h"
-#include "GameFramework/Actor.h"
 #include "MarchingChunk.generated.h"
-
-class FastNoiseLite;
-class UProceduralMeshComponent;
 
 UCLASS()
 class AMarchingChunk final : public AChunkBase

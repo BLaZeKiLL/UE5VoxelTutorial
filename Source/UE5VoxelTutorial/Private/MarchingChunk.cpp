@@ -3,7 +3,6 @@
 
 #include "MarchingChunk.h"
 
-#include "ProceduralMeshComponent.h"
 #include "FastNoiseLite.h"
 
 // Sets default values
