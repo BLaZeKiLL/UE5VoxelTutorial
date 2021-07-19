@@ -12,12 +12,6 @@ AMarchingChunk::AMarchingChunk()
 	Voxels.SetNum((Size + 1) * (Size + 1) * (Size + 1));
 }
 
-// Called when the game starts or when spawned
-void AMarchingChunk::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 void AMarchingChunk::GenerateHeightMap()
 {
 	Generate3DHeightMap(GetActorLocation() / 100);

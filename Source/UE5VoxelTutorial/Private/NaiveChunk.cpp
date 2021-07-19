@@ -14,12 +14,6 @@ ANaiveChunk::ANaiveChunk()
 	Blocks.SetNum(Size * Size * Size);
 }
 
-// Called when the game starts or when spawned
-void ANaiveChunk::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 void ANaiveChunk::GenerateHeightMap()
 {
 	const auto Location = GetActorLocation();

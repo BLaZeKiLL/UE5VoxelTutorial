@@ -14,12 +14,6 @@ AGreedyChunk::AGreedyChunk()
 	Blocks.SetNum(Size * Size * Size);
 }
 
-// Called when the game starts or when spawned
-void AGreedyChunk::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 void AGreedyChunk::GenerateHeightMap()
 {
 	const auto Location = GetActorLocation();
