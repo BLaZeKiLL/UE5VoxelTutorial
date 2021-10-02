@@ -23,8 +23,8 @@ void AMarchingChunk::Generate2DHeightMap(const FVector Position)
 	{
 		for (int y = 0; y <= Size; ++y)
 		{
-			const float Xpos = x * Position.X;
-			const float ypos = y * Position.Y;
+			const float Xpos = (x * 100 + Position.X) / 100;
+			const float ypos = (y * 100 + Position.Y) / 100;
 			
 			const int Height = FMath::Clamp(FMath::RoundToInt((Noise->GetNoise(Xpos, ypos) + 1) * Size / 2), 0, Size);
 
