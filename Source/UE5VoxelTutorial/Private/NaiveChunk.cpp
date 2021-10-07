@@ -4,7 +4,6 @@
 #include "NaiveChunk.h"
 
 #include "Enums.h"
-#include "ProceduralMeshComponent.h"
 #include "FastNoiseLite.h"
 
 // Sets default values
@@ -75,11 +74,13 @@ bool ANaiveChunk::Check(const FVector Position) const
 
 void ANaiveChunk::CreateFace(const EDirection Direction, const FVector Position)
 {
+	const auto Color = FColor::MakeRandomColor();
+	
 	MeshData.Vertices.Append(GetFaceVertices(Direction, Position));
 	MeshData.UV0.Append({ FVector2D(1,1), FVector2D(1,0), FVector2D(0,0), FVector2D(0,1) });
 	MeshData.Triangles.Append({ VertexCount + 3, VertexCount + 2, VertexCount, VertexCount + 2, VertexCount + 1, VertexCount });
-	auto Color = FColor::MakeRandomColor();
 	MeshData.Colors.Append({Color, Color, Color, Color});
+
 	VertexCount += 4;
 }
 
