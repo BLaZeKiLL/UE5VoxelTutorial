@@ -49,8 +49,6 @@ private:
 		5,4,1,0, // Up
 		3,2,7,6  // Down
 	};
-
-
 	
 	bool Check(FVector Position) const;
 	
