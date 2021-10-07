@@ -128,19 +128,29 @@ void AMarchingChunk::March(const int X, const int Y, const int Z, const float Cu
 		auto V3 = EdgeVertex[TriangleConnectionTable[VertexMask][3 * i + 2]] * 100;
 
 		auto Normal = FVector::CrossProduct(V2 - V1, V3 - V1);
+		auto Color = FColor::MakeRandomColor();
+		
 		Normal.Normalize();
 
-		MeshData.Vertices.Add(V1);
-		MeshData.Vertices.Add(V2);
-		MeshData.Vertices.Add(V3);
+		MeshData.Vertices.Append({V1, V2, V3});
+		
+		MeshData.Triangles.Append({
+			VertexCount + TriangleOrder[0],
+			VertexCount + TriangleOrder[1],
+			VertexCount + TriangleOrder[2]
+		});
 
-		MeshData.Triangles.Add(VertexCount + TriangleOrder[0]);
-		MeshData.Triangles.Add(VertexCount + TriangleOrder[1]);
-		MeshData.Triangles.Add(VertexCount + TriangleOrder[2]);
+		MeshData.Normals.Append({
+			Normal,
+			Normal,
+			Normal
+		});
 
-		MeshData.Normals.Add(Normal);
-		MeshData.Normals.Add(Normal);
-		MeshData.Normals.Add(Normal);
+		MeshData.Colors.Append({
+			Color,
+			Color,
+			Color
+		});
 
 		VertexCount += 3;
 	}
