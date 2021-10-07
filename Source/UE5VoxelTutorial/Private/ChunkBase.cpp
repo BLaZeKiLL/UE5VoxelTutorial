@@ -51,5 +51,15 @@ void AChunkBase::GenerateMesh()
 
 void AChunkBase::ApplyMesh() const
 {
-	Mesh->CreateMeshSection(0, MeshData.Vertices, MeshData.Triangles, MeshData.Normals, MeshData.UV0, TArray<FColor>(), TArray<FProcMeshTangent>(), false);
+	Mesh->SetMaterial(0, Material);
+	Mesh->CreateMeshSection(
+		0,
+		MeshData.Vertices,
+		MeshData.Triangles,
+		MeshData.Normals,
+		MeshData.UV0,
+		MeshData.Colors,
+		TArray<FProcMeshTangent>(),
+		false
+	);
 }

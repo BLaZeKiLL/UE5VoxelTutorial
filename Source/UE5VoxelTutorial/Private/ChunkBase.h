@@ -22,6 +22,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Chunk")
 	int Size = 64;
 
+	UPROPERTY(EditDefaultsOnly, Category="Chunk")
+	TObjectPtr<UMaterialInterface> Material;
+	
 	UPROPERTY(EditDefaultsOnly, Category="HeightMap")
 	float Frequency = 0.03f;
 	

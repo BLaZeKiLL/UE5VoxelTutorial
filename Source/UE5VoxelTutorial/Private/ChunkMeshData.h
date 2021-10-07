@@ -12,5 +12,6 @@ public:
 	TArray<FVector> Vertices;
 	TArray<int> Triangles;
 	TArray<FVector> Normals;
+	TArray<FColor> Colors;
 	TArray<FVector2D> UV0;
 };
