@@ -12,22 +12,6 @@ AGreedyChunk::AGreedyChunk()
 	Blocks.SetNum(Size * Size * Size);
 }
 
-void AGreedyChunk::GenerateHeightMap()
-{
-	switch (GenerationType)
-	{
-	case EGenerationType::GT_3D:
-		Generate3DHeightMap(GetActorLocation() / 100);
-		break;
-	case EGenerationType::GT_2D:
-		Generate2DHeightMap(GetActorLocation() / 100);
-		break;
-	default:
-		UE_LOG(LogTemp, Error, TEXT("Invalid Generation Type"))
-		break;
-	}
-}
-
 void AGreedyChunk::Generate2DHeightMap(const FVector Position)
 {
 	for (int x = 0; x < Size; x++)

@@ -28,8 +28,7 @@ void AChunkWorld::BeginPlay()
 		Generate2DWorld();
 		break;
 	default:
-		UE_LOG(LogTemp, Error, TEXT("Invalid Generation Type"))
-		break;
+		throw std::invalid_argument("Invalid Generation Type");
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("%d Chunks Created"), ChunkCount);

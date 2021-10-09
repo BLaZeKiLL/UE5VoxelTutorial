@@ -43,10 +43,17 @@ void AChunkBase::BeginPlay()
 
 void AChunkBase::GenerateHeightMap()
 {
-}
-
-void AChunkBase::GenerateMesh()
-{
+	switch (GenerationType)
+	{
+	case EGenerationType::GT_3D:
+		Generate3DHeightMap(GetActorLocation() / 100);
+		break;
+	case EGenerationType::GT_2D:
+		Generate2DHeightMap(GetActorLocation() / 100);
+		break;
+	default:
+		throw std::invalid_argument("Invalid Generation Type");
+	}
 }
 
 void AChunkBase::ApplyMesh() const
