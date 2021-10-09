@@ -5,12 +5,9 @@
 #include "CoreMinimal.h"
 
 #include "ChunkBase.h"
-#include "ChunkMeshData.h"
-#include "GameFramework/Actor.h"
+#include "Enums.h"
 #include "GreedyChunk.generated.h"
 
-enum class EBlock;
-enum class EDirection;
 class FastNoiseLite;
 class UProceduralMeshComponent;
 
@@ -28,7 +25,10 @@ class AGreedyChunk final : public AChunkBase
 public:	
 	// Sets default values for this actor's properties
 	AGreedyChunk();
-
+	
+	UPROPERTY(EditDefaultsOnly, Category="Height Map")
+	EGenerationType GenerationType;
+	
 protected:
 	virtual void GenerateHeightMap() override;
 	
@@ -37,6 +37,10 @@ protected:
 private:
 	TArray<EBlock> Blocks;
 
+	void Generate2DHeightMap(FVector Position);
+	
+	void Generate3DHeightMap(FVector Position);
+	
 	void CreateQuad(FMask Mask, FIntVector AxisMask, int Width, int Height, FIntVector V1, FIntVector V2, FIntVector V3, FIntVector V4);
 
 	int GetBlockIndex(int X, int Y, int Z) const;

@@ -14,17 +14,28 @@ AMarchingChunk::AMarchingChunk()
 
 void AMarchingChunk::GenerateHeightMap()
 {
-	Generate3DHeightMap(GetActorLocation() / 100);
+	switch (GenerationType)
+	{
+	case EGenerationType::GT_3D:
+		Generate3DHeightMap(GetActorLocation() / 100);
+		break;
+	case EGenerationType::GT_2D:
+		Generate2DHeightMap(GetActorLocation() / 100);
+		break;
+	default:
+		UE_LOG(LogTemp, Error, TEXT("Invalid Generation Type"))
+		break;
+	}
 }
 
 void AMarchingChunk::Generate2DHeightMap(const FVector Position)
 {
-	for (int x = 0; x <= Size; ++x)
+	for (int x = 0; x <= Size; x++)
 	{
-		for (int y = 0; y <= Size; ++y)
+		for (int y = 0; y <= Size; y++)
 		{
-			const float Xpos = (x * 100 + Position.X) / 100;
-			const float ypos = (y * 100 + Position.Y) / 100;
+			const float Xpos = x + Position.X;
+			const float ypos = y + Position.Y;
 			
 			const int Height = FMath::Clamp(FMath::RoundToInt((Noise->GetNoise(Xpos, ypos) + 1) * Size / 2), 0, Size);
 

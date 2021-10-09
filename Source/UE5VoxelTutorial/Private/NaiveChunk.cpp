@@ -3,7 +3,6 @@
 
 #include "NaiveChunk.h"
 
-#include "Enums.h"
 #include "FastNoiseLite.h"
 
 // Sets default values

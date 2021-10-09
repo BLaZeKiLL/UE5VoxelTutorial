@@ -5,11 +5,9 @@
 #include "CoreMinimal.h"
 
 #include "ChunkBase.h"
-#include "GameFramework/Actor.h"
+#include "Enums.h"
 #include "NaiveChunk.generated.h"
 
-enum class EBlock;
-enum class EDirection;
 class FastNoiseLite;
 class UProceduralMeshComponent;
 

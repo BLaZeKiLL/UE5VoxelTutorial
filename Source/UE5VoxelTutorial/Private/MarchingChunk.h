@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "ChunkBase.h"
+#include "Enums.h"
 #include "MarchingChunk.generated.h"
 
 UCLASS()
@@ -22,6 +23,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Marching Cubes")
 	bool Interpolation = false;
 
+	UPROPERTY(EditDefaultsOnly, Category="Height Map")
+	EGenerationType GenerationType;
+	
 protected:
 	virtual void GenerateHeightMap() override;
 

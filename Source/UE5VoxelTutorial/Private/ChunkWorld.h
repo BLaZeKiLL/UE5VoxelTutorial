@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Enums.h"
 #include "GameFramework/Actor.h"
 #include "ChunkWorld.generated.h"
 
@@ -18,7 +19,7 @@ public:
 	TSubclassOf<AChunkBase> Chunk;
 
 	UPROPERTY(EditInstanceOnly, Category="Chunk World")
-	bool Draw3D = false;
+	EGenerationType GenerationType;
 	
 	UPROPERTY(EditInstanceOnly, Category="Chunk World")
 	int DrawDistance = 5;
@@ -30,4 +31,10 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+private:
+	int ChunkCount;
+	int ChunkSize;
+	
+	void Generate3DWorld();
+	void Generate2DWorld();
 };

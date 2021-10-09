@@ -2,6 +2,7 @@
 
 
 #include "ChunkWorld.h"
+
 #include "ChunkBase.h"
 
 // Sets default values
@@ -16,37 +17,35 @@ void AChunkWorld::BeginPlay()
 {
 	Super::BeginPlay();
 
-	const int Size = Chunk.GetDefaultObject()->Size;
-	int ChunkCount = 0;
+	ChunkSize = Chunk.GetDefaultObject()->Size;
 
-	if (Draw3D)
+	switch (GenerationType)
 	{
-		for (int x = -DrawDistance; x <= DrawDistance; x++)
-		{
-			for (int y = -DrawDistance; y <= DrawDistance; ++y)
-			{
-				for (int z = -DrawDistance; z <= DrawDistance; ++z)
-				{
-					GetWorld()->SpawnActor<AChunkBase>(
-						Chunk,
-						FVector(x * Size * 100, y * Size * 100, z * Size * 100),
-						FRotator::ZeroRotator
-					);
-
-					ChunkCount++;
-				}
-			}
-		}
+	case EGenerationType::GT_3D:
+		Generate3DWorld();
+		break;
+	case EGenerationType::GT_2D:
+		Generate2DWorld();
+		break;
+	default:
+		UE_LOG(LogTemp, Error, TEXT("Invalid Generation Type"))
+		break;
 	}
-	else
+
+	UE_LOG(LogTemp, Warning, TEXT("%d Chunks Created"), ChunkCount);
+}
+
+void AChunkWorld::Generate3DWorld()
+{
+	for (int x = -DrawDistance; x <= DrawDistance; x++)
 	{
-		for (int x = -DrawDistance; x <= DrawDistance; x++)
+		for (int y = -DrawDistance; y <= DrawDistance; ++y)
 		{
-			for (int y = -DrawDistance; y <= DrawDistance; ++y)
+			for (int z = -DrawDistance; z <= DrawDistance; ++z)
 			{
 				GetWorld()->SpawnActor<AChunkBase>(
 					Chunk,
-					FVector(x * Size * 100, y * Size * 100, 0),
+					FVector(x * ChunkSize * 100, y * ChunkSize * 100, z * ChunkSize * 100),
 					FRotator::ZeroRotator
 				);
 
@@ -54,6 +53,21 @@ void AChunkWorld::BeginPlay()
 			}
 		}
 	}
+}
 
-	UE_LOG(LogTemp, Warning, TEXT("%d Chunks Created"), ChunkCount);
+void AChunkWorld::Generate2DWorld()
+{
+	for (int x = -DrawDistance; x <= DrawDistance; x++)
+	{
+		for (int y = -DrawDistance; y <= DrawDistance; ++y)
+		{
+			GetWorld()->SpawnActor<AChunkBase>(
+				Chunk,
+				FVector(x * ChunkSize * 100, y * ChunkSize * 100, 0),
+				FRotator::ZeroRotator
+			);
+
+			ChunkCount++;
+		}
+	}
 }
