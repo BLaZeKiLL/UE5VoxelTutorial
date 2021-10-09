@@ -3,7 +3,6 @@
 
 #include "GreedyChunk.h"
 
-#include "Enums.h"
 #include "FastNoiseLite.h"
 
 // Sets default values
@@ -13,16 +12,14 @@ AGreedyChunk::AGreedyChunk()
 	Blocks.SetNum(Size * Size * Size);
 }
 
-void AGreedyChunk::GenerateHeightMap()
+void AGreedyChunk::Generate2DHeightMap(const FVector Position)
 {
-	const auto Location = GetActorLocation();
-
 	for (int x = 0; x < Size; x++)
 	{
 		for (int y = 0; y < Size; y++)
 		{
-			const float Xpos = (x * 100 + Location.X) / 100;
-			const float ypos = (y * 100 + Location.Y) / 100;
+			const float Xpos = x + Position.X;
+			const float ypos = y + Position.Y;
 
 			const int Height = FMath::Clamp(FMath::RoundToInt((Noise->GetNoise(Xpos, ypos) + 1) * Size / 2), 0, Size);
 
@@ -34,6 +31,29 @@ void AGreedyChunk::GenerateHeightMap()
 			for (int z = Height; z < Size; z++)
 			{
 				Blocks[GetBlockIndex(x, y, z)] = EBlock::Air;
+			}
+		}
+	}
+}
+
+void AGreedyChunk::Generate3DHeightMap(const FVector Position)
+{
+	for (int x = 0; x < Size; ++x)
+	{
+		for (int y = 0; y < Size; ++y)
+		{
+			for (int z = 0; z < Size; ++z)
+			{
+				const auto NoiseValue = Noise->GetNoise(x + Position.X, y + Position.Y, z + Position.Z);
+
+				if (NoiseValue >= 0)
+				{
+					Blocks[GetBlockIndex(x, y, z)] = EBlock::Air;
+				}
+				else
+				{
+					Blocks[GetBlockIndex(x, y, z)] = EBlock::Stone;
+				}
 			}
 		}
 	}

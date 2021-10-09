@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ChunkMeshData.h"
+#include "Enums.h"
 #include "GameFramework/Actor.h"
 #include "ChunkBase.generated.h"
 
@@ -25,16 +26,18 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Chunk")
 	TObjectPtr<UMaterialInterface> Material;
 	
-	UPROPERTY(EditDefaultsOnly, Category="HeightMap")
+	UPROPERTY(EditDefaultsOnly, Category="Height Map")
 	float Frequency = 0.03f;
+
+	UPROPERTY(EditDefaultsOnly, Category="Height Map")
+	EGenerationType GenerationType;
 	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
-	virtual void GenerateHeightMap();
-
-	virtual void GenerateMesh();
+	virtual void Generate2DHeightMap(const FVector Position) PURE_VIRTUAL(AChunkBase::Generate2DHeightMap);
+	virtual void Generate3DHeightMap(const FVector Position) PURE_VIRTUAL(AChunkBase::Generate3DHeightMap);
+	virtual void GenerateMesh() PURE_VIRTUAL(AChunkBase::GenerateMesh);
 
 	TObjectPtr<UProceduralMeshComponent> Mesh;
 	FastNoiseLite* Noise;
@@ -43,4 +46,5 @@ protected:
 
 private:
 	void ApplyMesh() const;
+	void GenerateHeightMap();
 };

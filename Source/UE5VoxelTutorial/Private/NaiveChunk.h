@@ -5,11 +5,9 @@
 #include "CoreMinimal.h"
 
 #include "ChunkBase.h"
-#include "GameFramework/Actor.h"
+#include "Enums.h"
 #include "NaiveChunk.generated.h"
 
-enum class EBlock;
-enum class EDirection;
 class FastNoiseLite;
 class UProceduralMeshComponent;
 
@@ -23,8 +21,8 @@ public:
 	ANaiveChunk();
 
 protected:
-	virtual void GenerateHeightMap() override;
-
+	virtual void Generate2DHeightMap(FVector Position) override;
+	virtual void Generate3DHeightMap(FVector Position) override;
 	virtual void GenerateMesh() override;
 
 private:
@@ -51,12 +49,9 @@ private:
 	};
 	
 	bool Check(FVector Position) const;
-	
 	void CreateFace(EDirection Direction, FVector Position);
-
 	TArray<FVector> GetFaceVertices(EDirection Direction, FVector Position) const;
-
 	FVector GetPositionInDirection(EDirection Direction, FVector Position) const;
-	
+	FVector GetNormal(EDirection Direction) const;
 	int GetBlockIndex(int X, int Y, int Z) const;
 };

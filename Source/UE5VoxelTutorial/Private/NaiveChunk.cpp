@@ -3,7 +3,6 @@
 
 #include "NaiveChunk.h"
 
-#include "Enums.h"
 #include "FastNoiseLite.h"
 
 // Sets default values
@@ -13,16 +12,14 @@ ANaiveChunk::ANaiveChunk()
 	Blocks.SetNum(Size * Size * Size);
 }
 
-void ANaiveChunk::GenerateHeightMap()
+void ANaiveChunk::Generate2DHeightMap(const FVector Position)
 {
-	const auto Location = GetActorLocation();
-	
 	for (int x = 0; x < Size; x++)
 	{
 		for (int y = 0; y < Size; y++)
 		{
-			const float Xpos = (x * 100 + Location.X) / 100;
-			const float ypos = (y * 100 + Location.Y) / 100;
+			const float Xpos = x + Position.X;
+			const float ypos = y + Position.Y;
 			
 			const int Height = FMath::Clamp(FMath::RoundToInt((Noise->GetNoise(Xpos, ypos) + 1) * Size / 2), 0, Size);
 
@@ -36,6 +33,29 @@ void ANaiveChunk::GenerateHeightMap()
 				Blocks[GetBlockIndex(x,y,z)] = EBlock::Air;
 			}
 			
+		}
+	}
+}
+
+void ANaiveChunk::Generate3DHeightMap(const FVector Position)
+{
+	for (int x = 0; x < Size; ++x)
+	{
+		for (int y = 0; y < Size; ++y)
+		{
+			for (int z = 0; z < Size; ++z)
+			{
+				const auto NoiseValue = Noise->GetNoise(x + Position.X, y + Position.Y, z + Position.Z);
+
+				if (NoiseValue >= 0)
+				{
+					Blocks[GetBlockIndex(x, y, z)] = EBlock::Air;
+				}
+				else
+				{
+					Blocks[GetBlockIndex(x, y, z)] = EBlock::Stone;
+				}
+			}
 		}
 	}
 }
@@ -75,11 +95,13 @@ bool ANaiveChunk::Check(const FVector Position) const
 void ANaiveChunk::CreateFace(const EDirection Direction, const FVector Position)
 {
 	const auto Color = FColor::MakeRandomColor();
+	const auto Normal = GetNormal(Direction);
 	
 	MeshData.Vertices.Append(GetFaceVertices(Direction, Position));
-	MeshData.UV0.Append({ FVector2D(1,1), FVector2D(1,0), FVector2D(0,0), FVector2D(0,1) });
 	MeshData.Triangles.Append({ VertexCount + 3, VertexCount + 2, VertexCount, VertexCount + 2, VertexCount + 1, VertexCount });
+	MeshData.Normals.Append({Normal, Normal, Normal, Normal});
 	MeshData.Colors.Append({Color, Color, Color, Color});
+	MeshData.UV0.Append({ FVector2D(1,1), FVector2D(1,0), FVector2D(0,0), FVector2D(0,1) });
 
 	VertexCount += 4;
 }
@@ -100,13 +122,27 @@ FVector ANaiveChunk::GetPositionInDirection(const EDirection Direction, const FV
 {
 	switch (Direction)
 	{
-		case EDirection::Forward: return Position + FVector::ForwardVector;
-		case EDirection::Back: return Position + FVector::BackwardVector;
-		case EDirection::Left: return Position + FVector::LeftVector;
-		case EDirection::Right: return Position + FVector::RightVector;
-		case EDirection::Up: return Position + FVector::UpVector;
-		case EDirection::Down: return Position + FVector::DownVector;
-		default: throw std::invalid_argument("Invalid direction");
+	case EDirection::Forward: return Position + FVector::ForwardVector;
+	case EDirection::Back: return Position + FVector::BackwardVector;
+	case EDirection::Left: return Position + FVector::LeftVector;
+	case EDirection::Right: return Position + FVector::RightVector;
+	case EDirection::Up: return Position + FVector::UpVector;
+	case EDirection::Down: return Position + FVector::DownVector;
+	default: throw std::invalid_argument("Invalid direction");
+	}
+}
+
+FVector ANaiveChunk::GetNormal(const EDirection Direction) const
+{
+	switch (Direction)
+	{
+	case EDirection::Forward: return FVector::ForwardVector;
+	case EDirection::Right: return FVector::RightVector;
+	case EDirection::Back: return FVector::BackwardVector;
+	case EDirection::Left: return FVector::LeftVector;
+	case EDirection::Up: return FVector::UpVector;
+	case EDirection::Down: return FVector::DownVector;
+	default: throw std::invalid_argument("Invalid direction");
 	}
 }
 
