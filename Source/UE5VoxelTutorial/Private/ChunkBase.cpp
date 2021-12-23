@@ -16,10 +16,6 @@ AChunkBase::AChunkBase()
 	Mesh = CreateDefaultSubobject<UProceduralMeshComponent>("Mesh");
 	Noise = new FastNoiseLite();
 
-	Noise->SetFrequency(Frequency);
-	Noise->SetNoiseType(FastNoiseLite::NoiseType_Perlin);
-	Noise->SetFractalType(FastNoiseLite::FractalType_FBm);
-
 	// Mesh Settings
 	Mesh->SetCastShadow(false);
 
@@ -32,6 +28,12 @@ void AChunkBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	Noise->SetFrequency(Frequency);
+	Noise->SetNoiseType(FastNoiseLite::NoiseType_Perlin);
+	Noise->SetFractalType(FastNoiseLite::FractalType_FBm);
+
+	Setup();
+	
 	GenerateHeightMap();
 
 	GenerateMesh();

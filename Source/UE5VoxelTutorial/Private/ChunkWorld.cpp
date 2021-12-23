@@ -4,6 +4,7 @@
 #include "ChunkWorld.h"
 
 #include "ChunkBase.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AChunkWorld::AChunkWorld()
@@ -16,8 +17,6 @@ AChunkWorld::AChunkWorld()
 void AChunkWorld::BeginPlay()
 {
 	Super::BeginPlay();
-
-	ChunkSize = Chunk.GetDefaultObject()->Size;
 
 	switch (GenerationType)
 	{
@@ -42,11 +41,24 @@ void AChunkWorld::Generate3DWorld()
 		{
 			for (int z = -DrawDistance; z <= DrawDistance; ++z)
 			{
-				GetWorld()->SpawnActor<AChunkBase>(
-					Chunk,
-					FVector(x * ChunkSize * 100, y * ChunkSize * 100, z * ChunkSize * 100),
-					FRotator::ZeroRotator
+				auto transform = FTransform(
+					FRotator::ZeroRotator,
+					FVector(x * Size * 100, y * Size * 100, z * Size * 100),
+					FVector::OneVector
 				);
+
+				const auto chunk = GetWorld()->SpawnActorDeferred<AChunkBase>(
+					ChunkType,
+					transform,
+					this
+				);
+
+				chunk->GenerationType = EGenerationType::GT_3D;
+				chunk->Frequency = Frequency;
+				chunk->Material = Material;
+				chunk->Size = Size;
+
+				UGameplayStatics::FinishSpawningActor(chunk, transform);
 
 				ChunkCount++;
 			}
@@ -60,11 +72,24 @@ void AChunkWorld::Generate2DWorld()
 	{
 		for (int y = -DrawDistance; y <= DrawDistance; ++y)
 		{
-			GetWorld()->SpawnActor<AChunkBase>(
-				Chunk,
-				FVector(x * ChunkSize * 100, y * ChunkSize * 100, 0),
-				FRotator::ZeroRotator
+			auto transform = FTransform(
+				FRotator::ZeroRotator,
+				FVector(x * Size * 100, y * Size * 100, 0),
+				FVector::OneVector
 			);
+
+			const auto chunk = GetWorld()->SpawnActorDeferred<AChunkBase>(
+				ChunkType,
+				transform,
+				this
+			);
+
+			chunk->GenerationType = EGenerationType::GT_2D;
+			chunk->Frequency = Frequency;
+			chunk->Material = Material;
+			chunk->Size = Size;
+
+			UGameplayStatics::FinishSpawningActor(chunk, transform);
 
 			ChunkCount++;
 		}

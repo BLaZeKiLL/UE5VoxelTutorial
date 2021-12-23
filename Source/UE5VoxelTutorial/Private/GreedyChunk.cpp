@@ -5,8 +5,7 @@
 
 #include "FastNoiseLite.h"
 
-// Sets default values
-AGreedyChunk::AGreedyChunk()
+void AGreedyChunk::Setup()
 {
 	// Initialize Blocks
 	Blocks.SetNum(Size * Size * Size);

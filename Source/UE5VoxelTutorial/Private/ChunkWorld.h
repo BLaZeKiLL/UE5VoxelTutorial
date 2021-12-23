@@ -10,19 +10,28 @@
 class AChunkBase;
 
 UCLASS()
-class AChunkWorld : public AActor
+class AChunkWorld final : public AActor
 {
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditInstanceOnly, Category="Chunk World")
-	TSubclassOf<AChunkBase> Chunk;
-
-	UPROPERTY(EditInstanceOnly, Category="Chunk World")
-	EGenerationType GenerationType;
+	UPROPERTY(EditInstanceOnly, Category="World")
+	TSubclassOf<AChunkBase> ChunkType;
 	
-	UPROPERTY(EditInstanceOnly, Category="Chunk World")
+	UPROPERTY(EditInstanceOnly, Category="World")
 	int DrawDistance = 5;
+
+	UPROPERTY(EditInstanceOnly, Category="Chunk")
+	TObjectPtr<UMaterialInterface> Material;
+	
+	UPROPERTY(EditInstanceOnly, Category="Chunk")
+	int Size = 32;
+
+	UPROPERTY(EditInstanceOnly, Category="Height Map")
+	EGenerationType GenerationType;
+
+	UPROPERTY(EditInstanceOnly, Category="Height Map")
+	float Frequency = 0.03f;
 	
 	// Sets default values for this actor's properties
 	AChunkWorld();
@@ -33,7 +42,6 @@ protected:
 
 private:
 	int ChunkCount;
-	int ChunkSize;
 	
 	void Generate3DWorld();
 	void Generate2DWorld();
