@@ -5,8 +5,7 @@
 
 #include "FastNoiseLite.h"
 
-// Sets default values
-ANaiveChunk::ANaiveChunk()
+void ANaiveChunk::Setup()
 {
 	// Initialize Blocks
 	Blocks.SetNum(Size * Size * Size);

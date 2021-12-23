@@ -22,19 +22,15 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category="Chunk")
 	int Size = 64;
-
-	UPROPERTY(EditDefaultsOnly, Category="Chunk")
-	TObjectPtr<UMaterialInterface> Material;
 	
-	UPROPERTY(EditDefaultsOnly, Category="Height Map")
-	float Frequency = 0.03f;
-
-	UPROPERTY(EditDefaultsOnly, Category="Height Map")
+	TObjectPtr<UMaterialInterface> Material;
+	float Frequency;
 	EGenerationType GenerationType;
 	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void Setup() PURE_VIRTUAL(AChunkBase::Setup);
 	virtual void Generate2DHeightMap(const FVector Position) PURE_VIRTUAL(AChunkBase::Generate2DHeightMap);
 	virtual void Generate3DHeightMap(const FVector Position) PURE_VIRTUAL(AChunkBase::Generate3DHeightMap);
 	virtual void GenerateMesh() PURE_VIRTUAL(AChunkBase::GenerateMesh);

@@ -21,12 +21,9 @@ class AGreedyChunk final : public AChunkBase
 		EBlock Block;
 		int Normal;
 	};
-
-public:	
-	// Sets default values for this actor's properties
-	AGreedyChunk();
 	
 protected:
+	virtual void Setup() override;
 	virtual void Generate2DHeightMap(FVector Position) override;
 	virtual void Generate3DHeightMap(FVector Position) override;
 	virtual void GenerateMesh() override;

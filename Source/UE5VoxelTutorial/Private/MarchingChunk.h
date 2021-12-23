@@ -13,9 +13,6 @@ class AMarchingChunk final : public AChunkBase
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
-	AMarchingChunk();
-
 	UPROPERTY(EditDefaultsOnly, Category="Marching Cubes")
 	float SurfaceLevel = 0.0f;
 
@@ -23,6 +20,7 @@ public:
 	bool Interpolation = false;
 	
 protected:
+	virtual void Setup() override;
 	virtual void Generate2DHeightMap(FVector Position) override;
 	virtual void Generate3DHeightMap(FVector Position) override;
 	virtual void GenerateMesh() override;

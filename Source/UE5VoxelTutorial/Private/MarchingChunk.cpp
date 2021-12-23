@@ -5,8 +5,7 @@
 
 #include "FastNoiseLite.h"
 
-// Sets default values
-AMarchingChunk::AMarchingChunk()
+void AMarchingChunk::Setup()
 {
 	// Initialize Voxels
 	Voxels.SetNum((Size + 1) * (Size + 1) * (Size + 1));
