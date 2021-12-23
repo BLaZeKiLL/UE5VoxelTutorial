@@ -1,10 +1,10 @@
-# UE5VoxelTutorial
+# Unreal Engine 5 Voxel Tutorial
 
 video tutorial series - https://youtube.com/playlist?list=PLgji-9GMuqkK7EwUCVCuc2w3En1bPo5rA
 
 ###A Collection of voxel mesh generation algorithms
-- Naive Blocky Generation
-- Greedy Meshing Blocky Generation
+- Naive Blocky Generation (Minecraft like)
+- Greedy Meshing Blocky Generation (Probably what minecraft actually uses)
 - Marching Cubes (Blocky & Smooth)
 
 ###Features
