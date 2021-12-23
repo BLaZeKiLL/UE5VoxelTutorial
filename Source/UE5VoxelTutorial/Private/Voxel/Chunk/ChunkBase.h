@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ChunkMeshData.h"
-#include "Enums.h"
 #include "GameFramework/Actor.h"
+
+#include "Voxel/Utils/ChunkMeshData.h"
+#include "Voxel/Utils/Enums.h"
+
 #include "ChunkBase.generated.h"
 
 class FastNoiseLite;

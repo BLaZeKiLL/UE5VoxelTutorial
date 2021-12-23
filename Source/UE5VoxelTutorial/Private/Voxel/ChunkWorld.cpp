@@ -3,7 +3,7 @@
 
 #include "ChunkWorld.h"
 
-#include "ChunkBase.h"
+#include "Voxel/Chunk/ChunkBase.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values

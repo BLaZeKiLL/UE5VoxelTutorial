@@ -3,7 +3,7 @@
 
 #include "ChunkBase.h"
 
-#include "FastNoiseLite.h"
+#include "Voxel/Utils/FastNoiseLite.h"
 #include "ProceduralMeshComponent.h"
 
 
@@ -69,6 +69,6 @@ void AChunkBase::ApplyMesh() const
 		MeshData.UV0,
 		MeshData.Colors,
 		TArray<FProcMeshTangent>(),
-		false
+		true
 	);
 }

@@ -3,7 +3,7 @@
 
 #include "NaiveChunk.h"
 
-#include "FastNoiseLite.h"
+#include "Voxel/Utils/FastNoiseLite.h"
 
 void ANaiveChunk::Setup()
 {

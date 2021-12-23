@@ -3,7 +3,7 @@
 
 #include "GreedyChunk.h"
 
-#include "FastNoiseLite.h"
+#include "Voxel/Utils/FastNoiseLite.h"
 
 void AGreedyChunk::Setup()
 {
