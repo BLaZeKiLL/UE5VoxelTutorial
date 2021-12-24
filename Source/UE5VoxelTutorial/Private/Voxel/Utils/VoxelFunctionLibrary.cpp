@@ -12,7 +12,7 @@ FIntVector UVoxelFunctionLibrary::WorldToLocalBlockPosition(const FVector& Posit
 {
 	const auto ChunkPos = WorldToChunkPosition(Position, Size);
 	
-	auto Result = FIntVector(Position) / 100 - ChunkPos * Size;
+	auto Result = WorldToBlockPosition(Position) - ChunkPos * Size;
 
 	// Negative Normalization
 	if (ChunkPos.X < 0) Result.X--;
