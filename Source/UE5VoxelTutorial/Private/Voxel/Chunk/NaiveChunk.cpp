@@ -145,6 +145,13 @@ FVector ANaiveChunk::GetNormal(const EDirection Direction) const
 	}
 }
 
+void ANaiveChunk::ModifyVoxelData(const FIntVector Position, const EBlock Block)
+{
+	const int Index = GetBlockIndex(Position.X, Position.Y, Position.Z);
+	
+	Blocks[Index] = Block;
+}
+
 int ANaiveChunk::GetBlockIndex(const int X, const int Y, const int Z) const
 {
 	return Z * Size * Size + Y * Size + X;

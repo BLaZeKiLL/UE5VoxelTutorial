@@ -22,6 +22,7 @@ protected:
 	virtual void Generate2DHeightMap(FVector Position) override;
 	virtual void Generate3DHeightMap(FVector Position) override;
 	virtual void GenerateMesh() override;
+	virtual void ModifyVoxelData(const FIntVector Position, const EBlock Block) override;
 
 private:
 	TArray<EBlock> Blocks;

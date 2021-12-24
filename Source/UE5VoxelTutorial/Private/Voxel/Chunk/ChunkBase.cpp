@@ -60,7 +60,6 @@ void AChunkBase::GenerateHeightMap()
 
 void AChunkBase::ApplyMesh() const
 {
-	//Mesh->ClearAllMeshSections();
 	Mesh->SetMaterial(0, Material);
 	Mesh->CreateMeshSection(
 		0,
