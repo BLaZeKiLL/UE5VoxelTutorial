@@ -17,7 +17,7 @@ AChunkWorld::AChunkWorld()
 void AChunkWorld::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	switch (GenerationType)
 	{
 	case EGenerationType::GT_3D:

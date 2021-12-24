@@ -35,7 +35,7 @@ void AChunkBase::BeginPlay()
 	Setup();
 	
 	GenerateHeightMap();
-
+	
 	GenerateMesh();
 
 	UE_LOG(LogTemp, Warning, TEXT("Vertex Count : %d"), VertexCount);
@@ -60,6 +60,7 @@ void AChunkBase::GenerateHeightMap()
 
 void AChunkBase::ApplyMesh() const
 {
+	//Mesh->ClearAllMeshSections();
 	Mesh->SetMaterial(0, Material);
 	Mesh->CreateMeshSection(
 		0,
@@ -71,4 +72,21 @@ void AChunkBase::ApplyMesh() const
 		TArray<FProcMeshTangent>(),
 		true
 	);
+}
+
+void AChunkBase::ClearMesh()
+{
+	VertexCount = 0;
+	MeshData.Clear();
+}
+
+void AChunkBase::ModifyVoxel(const FIntVector Position, const EBlock Block)
+{
+	ModifyVoxelData(Position, Block);
+
+	ClearMesh();
+	
+	GenerateMesh();
+
+	ApplyMesh();
 }
