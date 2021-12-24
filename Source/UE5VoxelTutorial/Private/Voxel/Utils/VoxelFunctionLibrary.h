@@ -15,6 +15,9 @@ class UVoxelFunctionLibrary final : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 	UFUNCTION(BlueprintPure, Category="Voxel")
+	static FIntVector WorldToBlockPosition(const FVector& Position);
+	
+	UFUNCTION(BlueprintPure, Category="Voxel")
 	static FIntVector WorldToLocalBlockPosition(const FVector& Position, const int Size);
 
 	UFUNCTION(BlueprintPure, Category="Voxel")

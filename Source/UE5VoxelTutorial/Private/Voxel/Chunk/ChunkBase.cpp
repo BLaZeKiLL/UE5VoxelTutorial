@@ -81,6 +81,8 @@ void AChunkBase::ClearMesh()
 
 void AChunkBase::ModifyVoxel(const FIntVector Position, const EBlock Block)
 {
+	if (Position.X >= Size || Position.Y >= Size || Position.Z >= Size || Position.X < 0 || Position.Y < 0 || Position.Z < 0) return;
+	
 	ModifyVoxelData(Position, Block);
 
 	ClearMesh();
