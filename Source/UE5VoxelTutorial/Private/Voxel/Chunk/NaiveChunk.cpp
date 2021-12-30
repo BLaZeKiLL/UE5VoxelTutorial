@@ -3,7 +3,7 @@
 
 #include "NaiveChunk.h"
 
-#include "FastNoiseLite.h"
+#include "Voxel/Utils/FastNoiseLite.h"
 
 void ANaiveChunk::Setup()
 {
@@ -143,6 +143,13 @@ FVector ANaiveChunk::GetNormal(const EDirection Direction) const
 	case EDirection::Down: return FVector::DownVector;
 	default: throw std::invalid_argument("Invalid direction");
 	}
+}
+
+void ANaiveChunk::ModifyVoxelData(const FIntVector Position, const EBlock Block)
+{
+	const int Index = GetBlockIndex(Position.X, Position.Y, Position.Z);
+	
+	Blocks[Index] = Block;
 }
 
 int ANaiveChunk::GetBlockIndex(const int X, const int Y, const int Z) const

@@ -3,7 +3,7 @@
 
 #include "GreedyChunk.h"
 
-#include "FastNoiseLite.h"
+#include "Voxel/Utils/FastNoiseLite.h"
 
 void AGreedyChunk::Setup()
 {
@@ -197,7 +197,7 @@ void AGreedyChunk::CreateQuad(
 )
 {
 	const auto Normal = FVector(AxisMask * Mask.Normal);
-	const auto Color = FColor::MakeRandomColor();
+	const auto Color = FColor(96, 35, 115, 255);
 
 	MeshData.Vertices.Append({
 		FVector(V1) * 100,
@@ -237,6 +237,13 @@ void AGreedyChunk::CreateQuad(
 	});
 
 	VertexCount += 4;
+}
+
+void AGreedyChunk::ModifyVoxelData(const FIntVector Position, const EBlock Block)
+{
+	const int Index = GetBlockIndex(Position.X, Position.Y, Position.Z);
+	
+	Blocks[Index] = Block;
 }
 
 int AGreedyChunk::GetBlockIndex(const int X, const int Y, const int Z) const

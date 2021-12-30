@@ -3,7 +3,7 @@
 
 #include "ChunkWorld.h"
 
-#include "ChunkBase.h"
+#include "Voxel/Chunk/ChunkBase.h"
 #include "Kismet/GameplayStatics.h"
 
 // Sets default values
@@ -17,7 +17,7 @@ AChunkWorld::AChunkWorld()
 void AChunkWorld::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	switch (GenerationType)
 	{
 	case EGenerationType::GT_3D:

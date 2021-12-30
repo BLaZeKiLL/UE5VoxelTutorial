@@ -3,7 +3,7 @@
 
 #include "ChunkBase.h"
 
-#include "FastNoiseLite.h"
+#include "Voxel/Utils/FastNoiseLite.h"
 #include "ProceduralMeshComponent.h"
 
 
@@ -35,7 +35,7 @@ void AChunkBase::BeginPlay()
 	Setup();
 	
 	GenerateHeightMap();
-
+	
 	GenerateMesh();
 
 	UE_LOG(LogTemp, Warning, TEXT("Vertex Count : %d"), VertexCount);
@@ -69,6 +69,25 @@ void AChunkBase::ApplyMesh() const
 		MeshData.UV0,
 		MeshData.Colors,
 		TArray<FProcMeshTangent>(),
-		false
+		true
 	);
+}
+
+void AChunkBase::ClearMesh()
+{
+	VertexCount = 0;
+	MeshData.Clear();
+}
+
+void AChunkBase::ModifyVoxel(const FIntVector Position, const EBlock Block)
+{
+	if (Position.X >= Size || Position.Y >= Size || Position.Z >= Size || Position.X < 0 || Position.Y < 0 || Position.Z < 0) return;
+	
+	ModifyVoxelData(Position, Block);
+
+	ClearMesh();
+	
+	GenerateMesh();
+
+	ApplyMesh();
 }

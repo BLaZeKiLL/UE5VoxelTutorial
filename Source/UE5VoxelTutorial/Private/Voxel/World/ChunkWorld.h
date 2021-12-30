@@ -3,8 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Enums.h"
 #include "GameFramework/Actor.h"
+
+#include "Voxel/Utils/Enums.h"
+
 #include "ChunkWorld.generated.h"
 
 class AChunkBase;
