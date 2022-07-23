@@ -37,6 +37,7 @@ private:
 	int GetBlockIndex(int X, int Y, int Z) const;
 	EBlock GetBlock(FIntVector Index) const;
 	bool CompareMask(FMask M1, FMask M2) const;
+	int GetTextureIndex(EBlock Block, FVector Normal) const;
 };
 
 

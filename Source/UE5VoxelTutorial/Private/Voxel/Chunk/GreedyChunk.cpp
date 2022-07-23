@@ -22,14 +22,12 @@ void AGreedyChunk::Generate2DHeightMap(const FVector Position)
 
 			const int Height = FMath::Clamp(FMath::RoundToInt((Noise->GetNoise(Xpos, ypos) + 1) * Size / 2), 0, Size);
 
-			for (int z = 0; z < Height; z++)
+			for (int z = 0; z < Size; z++)
 			{
-				Blocks[GetBlockIndex(x, y, z)] = EBlock::Stone;
-			}
-
-			for (int z = Height; z < Size; z++)
-			{
-				Blocks[GetBlockIndex(x, y, z)] = EBlock::Air;
+				if (z < Height - 3) Blocks[GetBlockIndex(x, y, z)] = EBlock::Stone;
+				else if (z < Height - 1) Blocks[GetBlockIndex(x, y, z)] = EBlock::Dirt;
+				else if (z == Height - 1) Blocks[GetBlockIndex(x, y, z)] = EBlock::Grass;
+				else Blocks[GetBlockIndex(x, y, z)] = EBlock::Air;
 			}
 		}
 	}
@@ -197,7 +195,7 @@ void AGreedyChunk::CreateQuad(
 )
 {
 	const auto Normal = FVector(AxisMask * Mask.Normal);
-	const auto Color = FColor(96, 35, 115, 255);
+	const auto Color = FColor(0, 0, 0, GetTextureIndex(Mask.Block, Normal));
 
 	MeshData.Vertices.Append({
 		FVector(V1) * 100,
@@ -229,12 +227,24 @@ void AGreedyChunk::CreateQuad(
 		Color
 	});
 
-	MeshData.UV0.Append({
-		FVector2D(0, 0),
-		FVector2D(0, Width),
-		FVector2D(Height, 0),
-		FVector2D(Height, Width)
-	});
+	if (Normal.X == 1 || Normal.X == -1)
+	{
+		MeshData.UV0.Append({
+			FVector2D(Width, Height),
+			FVector2D(0, Height),
+			FVector2D(Width, 0),
+			FVector2D(0, 0),
+		});
+	}
+	else
+	{
+		MeshData.UV0.Append({
+			FVector2D(Height, Width),
+			FVector2D(Height, 0),
+			FVector2D(0, Width),
+			FVector2D(0, 0),
+		});
+	}
 
 	VertexCount += 4;
 }
@@ -261,4 +271,18 @@ EBlock AGreedyChunk::GetBlock(const FIntVector Index) const
 bool AGreedyChunk::CompareMask(const FMask M1, const FMask M2) const
 {
 	return M1.Block == M2.Block && M1.Normal == M2.Normal;
+}
+
+int AGreedyChunk::GetTextureIndex(const EBlock Block, const FVector Normal) const
+{
+	switch (Block) {
+	case EBlock::Grass:
+		{
+			if (Normal == FVector::UpVector) return 0;
+			return 1;
+		}
+	case EBlock::Dirt: return 2;
+	case EBlock::Stone: return 3;
+	default: return 255;
+	}
 }
