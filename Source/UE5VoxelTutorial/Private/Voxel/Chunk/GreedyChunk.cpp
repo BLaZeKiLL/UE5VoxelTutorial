@@ -18,9 +18,9 @@ void AGreedyChunk::Generate2DHeightMap(const FVector Position)
 		for (int y = 0; y < Size; y++)
 		{
 			const float Xpos = x + Position.X;
-			const float ypos = y + Position.Y;
+			const float Ypos = y + Position.Y;
 
-			const int Height = FMath::Clamp(FMath::RoundToInt((Noise->GetNoise(Xpos, ypos) + 1) * Size / 2), 0, Size);
+			const int Height = FMath::Clamp(FMath::RoundToInt((Noise->GetNoise(Xpos, Ypos) + 1) * Size / 2), 0, Size);
 
 			for (int z = 0; z < Size; z++)
 			{
@@ -66,8 +66,8 @@ void AGreedyChunk::GenerateMesh()
 		const int Axis2 = (Axis + 2) % 3;
 
 		const int MainAxisLimit = Size;
-		int Axis1Limit = Size;
-		int Axis2Limit = Size;
+		const int Axis1Limit = Size;
+		const int Axis2Limit = Size;
 
 		auto DeltaAxis1 = FIntVector::ZeroValue;
 		auto DeltaAxis2 = FIntVector::ZeroValue;
